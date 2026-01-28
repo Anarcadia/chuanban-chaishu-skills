@@ -1,6 +1,6 @@
 # 拆书 Skills 工具包 v1.0
 
-一套完整的小说拆书分析工具，适用于 Claude Code、Kimi CLI、OpenCode 等 AI 编程助手。
+由忒修斯的船板，基于自己的网文小说学习工作流构建的小说拆书分析工具，适用于 Claude Code、Kimi CLI、OpenCode 等 AI 执行的编程自动化终端。
 
 ## 功能特性
 
