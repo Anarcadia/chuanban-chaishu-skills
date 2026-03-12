@@ -41,7 +41,7 @@ supporting:             # 重要配角
 
 ```yaml
 metadata:
-  book: "变身妖女，我靠采补飞升"
+  book: "{书名}"
   last_processed_chapter: 46
   total_chapters_at_analysis: 46
   last_updated: "2026-01-28"
@@ -127,7 +127,7 @@ relationships:
 
 ```yaml
 metadata:
-  book: "变身妖女，我靠采补飞升"
+  book: "{书名}"
   last_processed_chapter: 46
   total_chapters_at_analysis: 46
   last_updated: "2026-01-28"

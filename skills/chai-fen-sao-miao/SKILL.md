@@ -24,7 +24,7 @@ description: |
 
 执行命令：
 ```bash
-python3 {{CHAISHU_DIR}}/novel_splitter.py --scan "文件路径"
+python3 {WORKSPACE}/novel_splitter.py --scan "文件路径"
 ```
 
 ### 步骤2：展示报告并询问用户
@@ -36,7 +36,7 @@ python3 {{CHAISHU_DIR}}/novel_splitter.py --scan "文件路径"
 
 执行命令：
 ```bash
-python3 {{CHAISHU_DIR}}/novel_splitter.py --split [层级] "文件路径"
+python3 {WORKSPACE}/novel_splitter.py --split [层级] "文件路径"
 ```
 
 ### 步骤4：报告完成

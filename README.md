@@ -1,154 +1,127 @@
-# 拆书 Skills 工具包 v1.0
+# 拆书 Skills 工具包 v2.2
 
-由忒修斯的船板，基于自己的网文小说学习工作流构建的小说拆书分析工具，适用于 Claude Code、Kimi CLI、OpenCode 等 AI 执行的编程自动化终端。
+由忒修斯的船板 (Anarcadia) 构建的小说拆书分析工具，适用于 Claude Code、Kimi CLI、OpenCode 等 AI 编程终端。
+
+**一句话版本**：让 AI 帮你把一本网文拆成结构化分析报告——章节概括、人物关系、事件线、爽点分析，全都自动生成。
 
 ## 功能特性
 
-### 📚 5 个专业 Skills
+### 📚 6 个专业 Skills
 
 | Skill | 功能 | 说明 |
 |-------|------|------|
-| **chai-shu** | 拆书主入口 | 菜单式调度，统一入口 |
+| **chai-shu** | 拆书主入口 | 菜单式调度，统一入口，阶段衔接协议 |
 | **chai-fen-sao-miao** | 结构扫描 | 识别章节结构，智能拆分 |
-| **fen-zhang-jie-gai-kuo** | 分章节概括 | 并行处理，生成章节摘要 |
-| **renwu-guanxi** | 人物关系 | 拟人阅读模式，提取人物关系 |
-| **shijian-xian** | 事件线追踪 | 拟人确认模式，追踪事件线 |
+| **fen-zhang-jie-gai-kuo** | 分章节概括 | 串行 sub-agent 架构，每3章一组生成500字概括 |
+| **renwu-guanxi** | 人物关系 | 拟人阅读模式，角色地位 + 关系图谱 |
+| **shijian-xian** | 事件线追踪 | 拟人确认模式，主线 + 支线事件链 |
+| **abc-fenxi** | ABC爽点分析 | 并行批处理，爽点密度热力图 |
 
 ### 🛠️ Python 工具
 
-- **novel_splitter.py** - 核心拆分工具
+- **novel_splitter.py** - 核心拆分脚本
   - 支持多种章节格式（卷/部/章/节/话/回/篇/集）
-  - 自动识别编码
+  - 自动识别编码（依赖 chardet）
   - 生成结构化输出
+
+## 核心流程
+
+```
+       你的小说文件（.txt）
+              │
+              v
+     ┌────────────────┐
+     │  1. 拆分扫描    │
+     └────────┬───────┘
+              │
+              v
+     ┌────────────────┐
+     │  2. 分章节概括   │
+     └───┬────┬────┬──┘
+         │    │    │
+         v    v    v      （三条线可以独立跑，互不影响）
+    ┌────┐ ┌────┐ ┌────┐
+    │人物│ │事件│ │ABC │
+    │概括│ │概括│ │分析│
+    └────┘ └────┘ └────┘
+```
 
 ## 快速开始
 
 ### 系统要求
 
-- Python 3.7+
-- Claude Code / Kimi CLI / OpenCode（任选其一）
+- Python 3.6+（需 `pip install chardet`）
+- Claude Code（Anthropic 官方 CLI）
 - macOS / Linux / Windows
 
-### 安装步骤
+### 安装
 
-#### macOS / Linux
+详见 **[AI部署说明.md](AI部署说明.md)** — 面向 AI 助手的完整部署指南，包含：
+- Claude Code 安装（Windows/macOS）
+- Skill 部署步骤
+- 路径占位符替换
+- 一键部署脚本（macOS + Windows）
+- 疑难排解
 
-```bash
-# 1. 解压工具包
-unzip chaishu-skills-v1.0.zip
-cd chaishu-skills-v1.0
+### 使用
 
-# 2. 运行安装脚本
-./scripts/install.sh
+详见 **[用户指南.md](用户指南.md)** — 面向用户的完整使用说明，包含：
+- 每个步骤的详细解说
+- 产出文件示例
+- ABC 爽点分析法讲解
+- 常见问题解答
 
-# 3. 按提示输入工作区路径（或直接回车使用默认路径）
-```
+### 快速示例
 
-#### Windows
-
-```powershell
-# 1. 解压工具包
-# 2. 右键点击 scripts/install.ps1
-# 3. 选择"使用 PowerShell 运行"
-# 4. 按提示输入工作区路径（或直接回车使用默认路径）
-```
-
-### 验证安装
-
-```bash
-# macOS / Linux
-python3 scripts/verify.py /path/to/your/Root
-
-# Windows
-python scripts\verify.py C:\path\to\your\Root
-```
-
-## 使用方法
-
-### 方法 1：通过 AI 助手（推荐）
-
-在 Claude Code / Kimi CLI / OpenCode 中输入：
+在 Claude Code 中输入：
 
 ```
 拆书
 ```
 
-会显示交互式菜单，选择需要的功能即可。
+会显示交互式菜单。或者直接：
 
-### 方法 2：直接使用 Python 工具
-
-```bash
-# 扫描小说结构
-python3 Factory/拆书/novel_splitter.py --scan 小说.txt
-
-# 拆分小说（按章）
-python3 Factory/拆书/novel_splitter.py --split 章 小说.txt
-
-# 查看帮助
-python3 Factory/拆书/novel_splitter.py --help
+```
+请帮我拆书。
+任务：自动化拆书。
+输入书籍：/path/to/your/novel.txt
 ```
 
 ## 目录结构
 
-安装后的目录结构：
-
 ```
-你的工作区/
-├── .claude/skills/          # Skills 安装位置
-│   ├── chai-shu/
-│   ├── chai-fen-sao-miao/
-│   ├── fen-zhang-jie-gai-kuo/
-│   ├── renwu-guanxi/
-│   └── shijian-xian/
-│
-└── Factory/拆书/             # 拆书工作目录
-    ├── novel_splitter.py    # Python 工具
-    └── [你的小说文件]
+本仓库/
+├── skills/                     # Skill 文件（部署到 .claude/skills/）
+│   ├── chai-shu/               # 主入口路由
+│   ├── chai-fen-sao-miao/      # 拆分扫描
+│   ├── fen-zhang-jie-gai-kuo/  # 分章节概括
+│   ├── renwu-guanxi/           # 人物关系分析
+│   ├── shijian-xian/           # 事件线追踪
+│   └── abc-fenxi/              # ABC爽点分析
+├── workspace/                  # 工作区文件
+│   ├── novel_splitter.py       # Python拆分脚本
+│   └── CLAUDE.md               # 项目级配置模板
+├── 用户指南.md                  # 用户使用说明
+├── AI部署说明.md                # AI助手部署指南
+└── README.md
 ```
 
-## 常见问题
+## v2.2 更新内容
 
-### Q: 支持哪些 AI 编程助手？
-
-A: 支持 Claude Code、Kimi CLI、OpenCode 等使用 `.claude/skills/` 目录的工具。
-
-### Q: 如何卸载？
-
-A: 删除以下目录即可：
-- `.claude/skills/chai-shu`
-- `.claude/skills/chai-fen-sao-miao`
-- `.claude/skills/fen-zhang-jie-gai-kuo`
-- `.claude/skills/renwu-guanxi`
-- `.claude/skills/shijian-xian`
-- `Factory/拆书/novel_splitter.py`
-
-### Q: 安装失败怎么办？
-
-A:
-1. 检查 Python 版本是否 3.7+
-2. 检查是否有写入权限
-3. 运行 `verify.py` 查看具体错误
-4. 查看 DEPLOY.md 中的详细说明
-
-### Q: 支持哪些小说格式？
-
-A: 支持 TXT 格式，自动识别编码（UTF-8、GBK 等）。
-
-## 技术支持
-
-- 问题反馈：[GitHub Issues]
-- 文档：查看 DEPLOY.md 获取更多技术细节
+相比 v1.0：
+- ✨ 新增 ABC 爽点分析 skill（并行批处理架构）
+- ✨ 新增阶段衔接协议（子阶段完成后自动呈现下一步选项）
+- ✨ 新增编排模式（子 skill 被主入口调用时跳过欢迎页、返回状态摘要）
+- ✨ 新增续接状态综合判断（5步状态表格 + 智能推荐）
+- 🔧 分章节概括改为串行 sub-agent 架构（性能版优化）
+- 🔧 人物/事件概括改为拟人阅读/确认模式
+- 📝 新增完整用户指南和 AI 部署说明
+- 🗑️ 移除旧版安装脚本和验证工具（改用 AI 辅助部署）
 
 ## 许可证
 
-MIT License - 详见 LICENSE 文件
+MIT License - 详见 [LICENSE](LICENSE) 文件
 
-## 更新日志
+## 技术支持
 
-### v1.0 (2026-01-28)
-
-- ✨ 首次发布
-- 📚 包含 5 个核心 Skills
-- 🛠️ 包含 novel_splitter.py 工具
-- 🚀 支持 macOS/Linux/Windows
-- 📝 完整的安装和验证脚本
+- 问题反馈：[GitHub Issues](https://github.com/Anarcadia/chuanban-chaishu-skills/issues)

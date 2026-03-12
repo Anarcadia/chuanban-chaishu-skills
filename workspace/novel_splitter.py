@@ -15,8 +15,8 @@ from typing import List, Dict, Tuple, Optional
 import chardet
 import unicodedata
 
-# 拆书工作目录
-WORK_DIR = Path("{{CHAISHU_DIR}}")
+# 拆书工作目录（默认使用脚本所在目录）
+WORK_DIR = Path(__file__).parent
 
 # ============== 章节识别正则模式 ==============
 
@@ -197,7 +197,7 @@ class NovelScanner:
         summary = self.get_summary()
 
         print("\n" + "="*60)
-        print("📖 小说结构扫描报告")
+        print("小说结构扫描报告")
         print("="*60)
         print(f"文件名：{summary['file_name']}")
         print(f"文件大小：{summary['file_size'] / 1024:.1f} KB")
@@ -211,7 +211,7 @@ class NovelScanner:
             print("  未检测到标准章节结构")
         else:
             for level, info in summary['levels'].items():
-                print(f"  • {level}级：{info['count']} 个")
+                print(f"  * {level}级：{info['count']} 个")
                 print(f"    首：{info['first']}")
                 print(f"    末：{info['last']}")
 
@@ -307,7 +307,7 @@ class NovelSplitter:
     def print_report(self):
         """打印拆分报告"""
         print("\n" + "="*60)
-        print("✅ 拆分完成报告")
+        print("拆分完成报告")
         print("="*60)
         print(f"拆分层级：{self.split_level}")
         print(f"输出目录：{self.output_dir}")
@@ -318,9 +318,9 @@ class NovelSplitter:
 
         if self.anomalies:
             print("-"*60)
-            print("⚠️ 异常情况：")
+            print("异常情况：")
             for a in self.anomalies:
-                print(f"  • {a['type']}：{a['note']}")
+                print(f"  * {a['type']}：{a['note']}")
 
         print("-"*60)
         print("章节列表：")
@@ -385,8 +385,6 @@ def main():
                 return normalized.replace("《", "").replace("》", "").replace("「", "").replace("」", "")
 
             # 检查是否已在书名目录中（防止嵌套）
-            # 1. 先检查父目录是否本身是在工作目录下的书名目录
-            # 2. 如果是，检查其内部是否已有嵌套的书名号目录
             if parent_dir.parent == WORK_DIR and clean_book_name(parent_name) == clean_book_name(book_name):
                 # 父目录就是项目目录（在 WORK_DIR 下）
                 project_dir = parent_dir
@@ -399,7 +397,7 @@ def main():
                 ]
                 for nested_dir in nested_dirs:
                     if nested_dir.exists() and nested_dir != parent_dir:
-                        print(f"⚠️ 检测到嵌套目录：{nested_dir}，将合并到父目录")
+                        print(f"检测到嵌套目录：{nested_dir}，将合并到父目录")
                         # 移动所有内容到父目录
                         for item in nested_dir.iterdir():
                             target = parent_dir / item.name
@@ -442,7 +440,7 @@ def main():
                 project_dir.mkdir(parents=True, exist_ok=True)
                 # 移动源文件
                 shutil.move(str(source_file), str(target_source_path))
-                print(f"\n📦 源文件已移动至：{target_source_path}")
+                print(f"\n源文件已移动至：{target_source_path}")
 
     return 0
 

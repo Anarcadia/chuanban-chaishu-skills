@@ -52,7 +52,7 @@ storylines:
 
 ```yaml
 metadata:
-  book: "末世顶级杀手的我变成了萝莉"
+  book: "{书名}"
   last_chapter: 237
   total_chapters_at_analysis: 237
   last_updated: "2026-01-28"
